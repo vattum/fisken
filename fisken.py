@@ -7,10 +7,12 @@ template.
 If Python and Arcade are installed, this example can be run from the command line with:
 python -m arcade.examples.starting_template
 """
-
+import random
 import arcade
 
-SPRITE_SCALING = 0.15
+SPRITE_SCALING_PLAYER = 0.15
+SPRITE_SCALING_FISH = 0.5
+FISH_COUNT = 50
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -51,6 +53,27 @@ class Player(arcade.Sprite):
             self.top = SCREEN_HEIGHT - 1
             self.change_y = 0
 
+class Fish(arcade.Sprite):
+    """
+    This class represents the coins on our screen. It is a child class of
+    the arcade library's "Sprite" class.
+    """
+
+    def reset_pos(self):
+
+        # Reset the coin to a random spot above the screen
+        self.center_y = random.randrange(0, SCREEN_HEIGHT)
+        self.center_x = random.randrange(-200, -100)
+
+    def update(self):
+
+        # Move the coin
+        self.center_x += 1
+
+        # See if the coin has fallen off the bottom of the screen.
+        # If so, reset it.
+        if self.left > SCREEN_WIDTH:
+            self.reset_pos()
 
 class MyGame(arcade.Window):
     """
@@ -89,7 +112,7 @@ class MyGame(arcade.Window):
         self.player_list = arcade.SpriteList()
 
         # Set up the player
-        self.player_sprite = Player("bilder/fisk1.png", SPRITE_SCALING)
+        self.player_sprite = Player("bilder/fisk1.png", SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = SCREEN_WIDTH - 100
         self.player_sprite.center_y = SCREEN_HEIGHT / 2
         self.player_list.append(self.player_sprite)
