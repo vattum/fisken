@@ -169,10 +169,10 @@ class MyGame(arcade.Window):
             self.up_pressed = True
         elif key == arcade.key.DOWN:
             self.down_pressed = True
-        elif key == arcade.key.LEFT:
-            self.left_pressed = True
-        elif key == arcade.key.RIGHT:
-            self.right_pressed = True
+        #elif key == arcade.key.LEFT:
+        #    self.left_pressed = True
+        #elif key == arcade.key.RIGHT:
+        #    self.right_pressed = True
 
     def on_key_release(self, key, key_modifiers):
         """
