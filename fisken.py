@@ -72,8 +72,8 @@ class MyGame(arcade.Window):
 
         # Set up the player
         self.player_sprite = Player("bilder/fisk1.png", SPRITE_SCALING)
-        self.player_sprite.center_x = 50
-        self.player_sprite.center_y = 50
+        self.player_sprite.center_x = SCREEN_WIDTH - 100
+        self.player_sprite.center_y = SCREEN_HEIGHT / 2
         self.player_list.append(self.player_sprite)
 
 
@@ -111,10 +111,10 @@ class MyGame(arcade.Window):
             self.player_sprite.change_y = MOVEMENT_SPEED
         elif key == arcade.key.DOWN:
             self.player_sprite.change_y = -MOVEMENT_SPEED
-        elif key == arcade.key.LEFT:
-            self.player_sprite.change_x = -MOVEMENT_SPEED
-        elif key == arcade.key.RIGHT:
-            self.player_sprite.change_x = MOVEMENT_SPEED
+        #elif key == arcade.key.LEFT:
+        #    self.player_sprite.change_x = -MOVEMENT_SPEED
+        #elif key == arcade.key.RIGHT:
+        #    self.player_sprite.change_x = MOVEMENT_SPEED
 
 
     def on_key_release(self, key, key_modifiers):
