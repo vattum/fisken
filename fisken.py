@@ -11,7 +11,7 @@ import arcade
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-SCREEN_TITLE = "fisken"
+SCREEN_TITLE = "Fisken"
 
 
 class MyGame(arcade.Window):
