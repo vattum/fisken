@@ -150,16 +150,16 @@ class MyGame(arcade.Window):
         self.fish_sprite_list.draw()
 
         # Display speed
-        arcade.draw_text(
-            f"X Speed: {self.player_sprite.change_x:6.3f}", 10, 50, arcade.color.BLACK
-        )
-        arcade.draw_text(
-            f"Y Speed: {self.player_sprite.change_y:6.3f}", 10, 70, arcade.color.BLACK
-        )
+        #arcade.draw_text(
+        #   f"X Speed: {self.player_sprite.change_x:6.3f}", 10, 50, arcade.color.BLACK
+        #
+        #arcade.draw_text(
+        #   f"Y Speed: {self.player_sprite.change_y:6.3f}", 10, 70, arcade.color.BLACK
+        #
         
         # Put the text on the screen.
         output = f"Poäng: {self.score}"
-        arcade.draw_text(output, 10, 20, arcade.color.BLACK, 14)
+        arcade.draw_text(output, 10, 10, arcade.color.BLACK, 14)
 
     def on_update(self, delta_time):
         """
