@@ -69,7 +69,7 @@ class Fish(arcade.Sprite):
     def update(self):
 
         # Move the fish
-        self.center_x += MAX_SPEED_FISHES
+        self.center_x += round(MAX_SPEED_FISHES * SPRITE_SCALING_FISH / self.scale)
 
         # See if the fish has gone to the right of the screen.
         # If so, reset it.
@@ -126,7 +126,7 @@ class MyGame(arcade.Window):
         for i in range(FISH_COUNT):
 
             # Create the fish instance
-            fish = Fish("bilder/fisk2.png", SPRITE_SCALING_FISH)
+            fish = Fish("bilder/fisk2.png", SPRITE_SCALING_FISH * random.uniform(0.5, 2))
 
             # Position the fish
             fish.reset_pos()
