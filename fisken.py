@@ -11,18 +11,19 @@ import random
 import arcade
 
 SPRITE_SCALING_PLAYER = 0.15
-SPRITE_SCALING_FISH = 0.5
-FISH_COUNT = 50
+SPRITE_SCALING_FISH = 0.1
+FISH_COUNT = 200
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "Fisken"
 
 # Speed limit
-MAX_SPEED = 5.0
+MAX_SPEED_PLAYER = 7
+MAX_SPEED_FISHES = 2
 
 # How fast we accelerate
-ACCELERATION_RATE = 0.2
+ACCELERATION_RATE = 0.4
 
 # How fast to slow down after we let off the key
 FRICTION = 0.05
@@ -55,22 +56,22 @@ class Player(arcade.Sprite):
 
 class Fish(arcade.Sprite):
     """
-    This class represents the coins on our screen. It is a child class of
+    This class represents the fishes on our screen. It is a child class of
     the arcade library's "Sprite" class.
     """
 
     def reset_pos(self):
 
-        # Reset the coin to a random spot above the screen
+        # Reset the fish to a random spot above the screen
         self.center_y = random.randrange(0, SCREEN_HEIGHT)
-        self.center_x = random.randrange(-200, -100)
+        self.center_x = random.randrange(-50*FISH_COUNT*MAX_SPEED_FISHES, -100)
 
     def update(self):
 
-        # Move the coin
-        self.center_x += 1
+        # Move the fish
+        self.center_x += MAX_SPEED_FISHES
 
-        # See if the coin has fallen off the bottom of the screen.
+        # See if the fish has gone to the right of the screen.
         # If so, reset it.
         if self.left > SCREEN_WIDTH:
             self.reset_pos()
@@ -92,7 +93,10 @@ class MyGame(arcade.Window):
 
         # Set up the player info
         self.player_sprite = None
+        self.fish_sprite_list = None
 
+        self.score = 0
+        
         # Track the current state of what key is pressed
         self.left_pressed = False
         self.right_pressed = False
@@ -110,12 +114,25 @@ class MyGame(arcade.Window):
 
         # Sprite lists
         self.player_list = arcade.SpriteList()
+        self.fish_sprite_list = arcade.SpriteList()
 
         # Set up the player
         self.player_sprite = Player("bilder/fisk1.png", SPRITE_SCALING_PLAYER)
         self.player_sprite.center_x = SCREEN_WIDTH - 100
         self.player_sprite.center_y = SCREEN_HEIGHT / 2
         self.player_list.append(self.player_sprite)
+
+        # Create the fishes
+        for i in range(FISH_COUNT):
+
+            # Create the fish instance
+            fish = Fish("bilder/fisk2.png", SPRITE_SCALING_FISH)
+
+            # Position the fish
+            fish.reset_pos()
+
+            # Add the fish to the lists
+            self.fish_sprite_list.append(fish)
 
     def on_draw(self):
         """
@@ -127,7 +144,8 @@ class MyGame(arcade.Window):
         self.clear()
 
         # Draw all the sprites.
-        self.player_list.draw()
+        self.player_list.draw()        
+        self.fish_sprite_list.draw()
 
         # Display speed
         arcade.draw_text(
@@ -136,6 +154,10 @@ class MyGame(arcade.Window):
         arcade.draw_text(
             f"Y Speed: {self.player_sprite.change_y:6.3f}", 10, 70, arcade.color.BLACK
         )
+        
+        # Put the text on the screen.
+        output = f"Poäng: {self.score}"
+        arcade.draw_text(output, 10, 20, arcade.color.BLACK, 14)
 
     def on_update(self, delta_time):
         """
@@ -168,17 +190,28 @@ class MyGame(arcade.Window):
         elif self.right_pressed and not self.left_pressed:
             self.player_sprite.change_x += ACCELERATION_RATE
 
-        if self.player_sprite.change_x > MAX_SPEED:
-            self.player_sprite.change_x = MAX_SPEED
-        elif self.player_sprite.change_x < -MAX_SPEED:
-            self.player_sprite.change_x = -MAX_SPEED
-        if self.player_sprite.change_y > MAX_SPEED:
-            self.player_sprite.change_y = MAX_SPEED
-        elif self.player_sprite.change_y < -MAX_SPEED:
-            self.player_sprite.change_y = -MAX_SPEED
+        if self.player_sprite.change_x > MAX_SPEED_PLAYER:
+            self.player_sprite.change_x = MAX_SPEED_PLAYER
+        elif self.player_sprite.change_x < -MAX_SPEED_PLAYER:
+            self.player_sprite.change_x = -MAX_SPEED_PLAYER
+        if self.player_sprite.change_y > MAX_SPEED_PLAYER:
+            self.player_sprite.change_y = MAX_SPEED_PLAYER
+        elif self.player_sprite.change_y < -MAX_SPEED_PLAYER:
+            self.player_sprite.change_y = -MAX_SPEED_PLAYER
 
         # Move the player
         self.player_list.update()
+
+        self.fish_sprite_list.update()
+
+        # Generate a list of all sprites that collided with the player.
+        hit_list = arcade.check_for_collision_with_list(self.player_sprite,
+                                                        self.fish_sprite_list)
+
+        # Loop through each colliding sprite, remove it, and add to the score.
+        for fish in hit_list:
+            fish.remove_from_sprite_lists()
+            self.score += 1
 
     def on_key_press(self, key, key_modifiers):
         """
