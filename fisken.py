@@ -32,14 +32,14 @@ FRICTION = 0.05
 class Player(arcade.Sprite):
     """Player Class"""
 
-    def update(self):
+    def update(self, delta_time):
         """Move the player"""
         # Move player.
         # Remove these lines if physics engine is moving player.
         self.center_x += self.change_x
         self.center_y += self.change_y
 
-        self.angle = -self.change_y
+        self.angle = self.change_y
 
         # Check for out-of-bounds
         if self.left < 0:
@@ -68,10 +68,10 @@ class Fish(arcade.Sprite):
         self.center_y = random.randrange(50, SCREEN_HEIGHT - 50)
         self.center_x = random.randrange(-50*FISH_COUNT*MAX_SPEED_FISHES, -100)
 
-    def update(self):
-
+    def update(self, delta_time):
+        
         # Move the fish
-        self.center_x += round(MAX_SPEED_FISHES * SPRITE_SCALING_FISH / self.scale)
+        self.center_x += round(MAX_SPEED_FISHES * SPRITE_SCALING_FISH / self.scale_x)
 
         # See if the fish has gone to the right of the screen.
         # If so, reset it.
@@ -109,6 +109,8 @@ class MyGame(arcade.Window):
 
         # If you have sprite lists, you should create them here,
         # and set them to None
+
+        self.points_text = arcade.Text("Poäng:", 10, 10, arcade.color.BLACK, 14)
 
     def setup(self):
         """Set up the game variables. Call to re-start the game."""
@@ -148,18 +150,12 @@ class MyGame(arcade.Window):
         # Draw all the sprites.
         self.player_list.draw()        
         self.fish_sprite_list.draw()
-
-        # Display speed
-        #arcade.draw_text(
-        #   f"X Speed: {self.player_sprite.change_x:6.3f}", 10, 50, arcade.color.BLACK
-        #
-        #arcade.draw_text(
-        #   f"Y Speed: {self.player_sprite.change_y:6.3f}", 10, 70, arcade.color.BLACK
-        #
         
         # Put the text on the screen.
         output = f"Poäng: {self.score}"
-        arcade.draw_text(output, 10, 10, arcade.color.BLACK, 14)
+        self.points_text.text = output
+        self.points_text.draw()
+
 
     def on_update(self, delta_time):
         """

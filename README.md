@@ -2,4 +2,4 @@
 
 ## Python-paket som behövs
 
-- arcade
+- arcade==3.1.0
