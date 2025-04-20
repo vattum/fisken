@@ -23,6 +23,7 @@ SCREEN_TITLE = "Fisken"
 # Speed limit
 MAX_SPEED_PLAYER = 7
 MAX_SPEED_FISHES = 2
+ORIGINAL_MAX_SPEED_FISHES = MAX_SPEED_FISHES
 
 # How fast we accelerate
 ACCELERATION_RATE = 0.4
@@ -32,6 +33,8 @@ FRICTION = 0.05
 
 LIFE_COUNT = 3
 LIVES_DISTANCE = 40
+
+DIFFICULTY = 1 # 0 means no change in difficulty, 1 means fish in the end go twice as fast, 2 means fish in the end go thrice as fast, ...
 
 class Player(arcade.Sprite):
     """Player Class"""
@@ -243,6 +246,9 @@ class GameView(arcade.View):
         for fish in hit_list:
             fish.remove_from_sprite_lists()
             self.window.score += 1
+
+            global MAX_SPEED_FISHES
+            MAX_SPEED_FISHES = ORIGINAL_MAX_SPEED_FISHES + DIFFICULTY * self.window.score / FISH_COUNT
 
             if self.window.score == FISH_COUNT:
                 you_won_view = YouWonView()
