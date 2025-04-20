@@ -73,7 +73,7 @@ class Fish(arcade.Sprite):
 
         # Reset the fish to a random spot above the screen
         self.center_y = random.randrange(50, SCREEN_HEIGHT - 50)
-        self.center_x = random.randrange(-50*FISH_COUNT*MAX_SPEED_FISHES, -100)
+        self.center_x = random.randrange(round(-50*FISH_COUNT*MAX_SPEED_FISHES), -100)
 
     def update(self, delta_time, game_view: "GameView"):
         
