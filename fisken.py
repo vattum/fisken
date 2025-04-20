@@ -72,7 +72,7 @@ class Fish(arcade.Sprite):
         self.center_y = random.randrange(50, SCREEN_HEIGHT - 50)
         self.center_x = random.randrange(-50*FISH_COUNT*MAX_SPEED_FISHES, -100)
 
-    def update(self, delta_time):
+    def update(self, delta_time, game_view: "GameView"):
         
         # Move the fish
         self.center_x += round(MAX_SPEED_FISHES * SPRITE_SCALING_FISH / self.scale_x)
@@ -80,7 +80,12 @@ class Fish(arcade.Sprite):
         # See if the fish has gone to the right of the screen.
         # If so, reset it.
         if self.left > SCREEN_WIDTH:
+            game_view.lives_sprite_list.pop()
             self.reset_pos()
+
+            if len(game_view.lives_sprite_list) == 0:
+                game_over_view = GameOverView()
+                game_view.window.show_view(game_over_view)
 
 class Life(arcade.Sprite):
     """
@@ -88,7 +93,7 @@ class Life(arcade.Sprite):
     the arcade library's "Sprite" class.
     """
 
-class MyGame(arcade.Window):
+class GameView(arcade.View):
     """
     Main application class.
 
@@ -97,8 +102,8 @@ class MyGame(arcade.Window):
     with your own code. Don't leave 'pass' in this program.
     """
 
-    def __init__(self, width, height, title):
-        super().__init__(width, height, title)
+    def __init__(self):
+        super().__init__()
 
         # Variables that will hold sprite lists
         self.player_list = None
@@ -108,7 +113,7 @@ class MyGame(arcade.Window):
         self.fish_sprite_list = None
         self.lives_sprite_list = None
 
-        self.score = 0
+        self.window.score = 0
         
         # Track the current state of what key is pressed
         self.left_pressed = False
@@ -180,7 +185,7 @@ class MyGame(arcade.Window):
         self.lives_sprite_list.draw()
 
         # Put the text on the screen.
-        output = f"Poäng: {self.score}"
+        output = f"Poäng: {self.window.score}"
         self.points_text.text = output
         self.points_text.draw()
 
@@ -228,7 +233,7 @@ class MyGame(arcade.Window):
         # Move the player
         self.player_list.update()
 
-        self.fish_sprite_list.update()
+        self.fish_sprite_list.update(game_view=self)
 
         # Generate a list of all sprites that collided with the player.
         hit_list = arcade.check_for_collision_with_list(self.player_sprite,
@@ -237,7 +242,11 @@ class MyGame(arcade.Window):
         # Loop through each colliding sprite, remove it, and add to the score.
         for fish in hit_list:
             fish.remove_from_sprite_lists()
-            self.score += 1
+            self.window.score += 1
+
+            if self.window.score == FISH_COUNT:
+                you_won_view = YouWonView()
+                self.window.show_view(you_won_view)
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -288,11 +297,98 @@ class MyGame(arcade.Window):
         """
         pass
 
+class GameOverView(arcade.View):
+
+    def __init__(self):
+        super().__init__()
+
+    def on_show_view(self):
+        self.window.background_color = arcade.color.BLACK
+
+    def on_draw(self):
+        self.clear()
+        """
+        Draw "Game over" across the screen.
+        """
+        arcade.draw_text(
+            "Spelet är slut",
+            x=SCREEN_WIDTH/2,
+            y=SCREEN_HEIGHT/2,
+            color=arcade.color.WHITE,
+            font_size=54,
+            anchor_x="center"
+        )
+
+        arcade.draw_text(
+            "Klicka för att starta om",
+            x=SCREEN_WIDTH/2,
+            y=SCREEN_HEIGHT/2-100,
+            color=arcade.color.WHITE,
+            font_size=24,
+            anchor_x="center",
+        )
+
+        output_total = f"Total poäng för försöket: {self.window.score}"
+
+        arcade.draw_text(output_total, 10, 10, arcade.color.WHITE, 14)
+
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        game_view = GameView()
+        game_view.setup()
+        self.window.show_view(game_view)
+
+
+class YouWonView(arcade.View):
+
+    def __init__(self):
+        super().__init__()
+
+    def on_show_view(self):
+        self.window.background_color = arcade.color.AMAZON
+
+    def on_draw(self):
+        self.clear()
+        """
+        Draw "You Won" across the screen.
+        """
+        arcade.draw_text(
+            "Du vann!",
+            x=SCREEN_WIDTH/2,
+            y=SCREEN_HEIGHT/2,
+            color=arcade.color.WHITE,
+            font_size=54,
+            anchor_x="center"
+        )
+
+        arcade.draw_text(
+            "Klicka för att starta om",
+            x=SCREEN_WIDTH/2,
+            y=SCREEN_HEIGHT/2-100,
+            color=arcade.color.WHITE,
+            font_size=24,
+            anchor_x="center",
+        )
+
+        output_total = f"Total poäng för försöket: {self.window.score}"
+
+        arcade.draw_text(output_total, 10, 10, arcade.color.WHITE, 14)
+
+
+    def on_mouse_press(self, _x, _y, _button, _modifiers):
+        game_view = GameView()
+        game_view.setup()
+        self.window.show_view(game_view)
+
+
 
 def main():
     """Main function"""
-    game = MyGame(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
-    game.setup()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+
+    game_view = GameView()
+    game_view.setup()
+    window.show_view(game_view)
     arcade.run()
 
 
