@@ -12,7 +12,9 @@ import arcade
 
 SPRITE_SCALING_PLAYER = 0.15
 SPRITE_SCALING_FISH = 0.1
+SPRITE_SCALING_LIFE = 0.06
 FISH_COUNT = 200
+
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -28,6 +30,8 @@ ACCELERATION_RATE = 0.4
 # How fast to slow down after we let off the key
 FRICTION = 0.05
 
+LIFE_COUNT = 3
+LIVES_DISTANCE = 40
 
 class Player(arcade.Sprite):
     """Player Class"""
@@ -78,6 +82,12 @@ class Fish(arcade.Sprite):
         if self.left > SCREEN_WIDTH:
             self.reset_pos()
 
+class Life(arcade.Sprite):
+    """
+    This class represents the lives on our screen. It is a child class of
+    the arcade library's "Sprite" class.
+    """
+
 class MyGame(arcade.Window):
     """
     Main application class.
@@ -96,6 +106,7 @@ class MyGame(arcade.Window):
         # Set up the player info
         self.player_sprite = None
         self.fish_sprite_list = None
+        self.lives_sprite_list = None
 
         self.score = 0
         
@@ -119,6 +130,8 @@ class MyGame(arcade.Window):
         # Sprite lists
         self.player_list = arcade.SpriteList()
         self.fish_sprite_list = arcade.SpriteList()
+        self.lives_sprite_list = arcade.SpriteList()
+
 
         # Set up the player
         self.player_sprite = Player("bilder/fisk1.png", SPRITE_SCALING_PLAYER)
@@ -138,6 +151,20 @@ class MyGame(arcade.Window):
             # Add the fish to the lists
             self.fish_sprite_list.append(fish)
 
+        # Create the lives
+        for i in range(LIFE_COUNT):
+
+            # Create the life instance
+            life = Life("bilder/hjarta1.png", SPRITE_SCALING_LIFE)
+
+            # Position the life
+            life.center_y = SCREEN_HEIGHT - 30
+            life.center_x = 30 + i*LIVES_DISTANCE
+            
+            # Add the life to the lists
+            self.lives_sprite_list.append(life)
+
+
     def on_draw(self):
         """
         Render the screen.
@@ -150,7 +177,8 @@ class MyGame(arcade.Window):
         # Draw all the sprites.
         self.player_list.draw()        
         self.fish_sprite_list.draw()
-        
+        self.lives_sprite_list.draw()
+
         # Put the text on the screen.
         output = f"Poäng: {self.score}"
         self.points_text.text = output
