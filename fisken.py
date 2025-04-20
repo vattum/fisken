@@ -171,7 +171,9 @@ class GameView(arcade.View):
             
             # Add the life to the lists
             self.lives_sprite_list.append(life)
-
+            
+        global MAX_SPEED_FISHES
+        MAX_SPEED_FISHES = ORIGINAL_MAX_SPEED_FISHES
 
     def on_draw(self):
         """
